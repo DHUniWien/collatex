@@ -1,0 +1,6 @@
+FROM alpine
+LABEL vendor=DHUniWien
+
+RUN apk update \
+ && apk upgrade \
+ && apk add git maven openjdk8

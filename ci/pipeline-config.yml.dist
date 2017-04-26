@@ -1,0 +1,10 @@
+collatex-sources:
+
+insecure-registries:
+collatex-ci-image:
+
+maven-config-uri:
+
+version-uri:
+version-branch:
+version-file: ci/version

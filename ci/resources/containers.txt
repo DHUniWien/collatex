@@ -1,0 +1,8 @@
+REGISTRY=registry:5000
+
+/etc/hosts:
+<ip of registry> registry
+
+docker build --file Dockerfile-ci --tag collatex-ci:latest .
+docker tag collatex-ci:latest ${REGISTRY}/collatex-ci:latest
+docker push ${REGISTRY}/collatex-ci:latest

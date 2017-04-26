@@ -1,0 +1,93 @@
+---
+resources:
+    - name: collatex-sources
+      type: git
+      source:
+        uri: {{collatex-sources}}
+
+    - name: maven-config
+      type: git
+      source:
+        uri: {{maven-config-uri}}
+        private_key: {{DHUniWienMU-priv-key}}
+
+#    - name: version
+#      type: semver
+#      source:
+#        driver: git
+#        uri: {{version-uri}}
+#        branch: {{version-branch}}
+#        file: {{version-file}}
+#        initial_version: "0.0.0"
+
+
+jobs:
+    - name: test
+      plan:
+        - aggregate:
+          - get: collatex-sources
+            trigger: true
+          - get: maven-config
+            trigger: true
+
+        - task: task-test
+
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: {{collatex-ci-image}}
+                insecure_registries: [ {{insecure-registries}} ]
+
+            inputs:
+              - name: collatex-sources
+              - name: maven-config
+
+            run:
+              path: sh
+              args:
+                - -exc
+                - |
+                  mkdir /root/.m2/
+                  cp maven-config/settings.xml /root/.m2/
+                  cd collatex-sources
+                  mvn test
+
+
+    - name: package
+      plan:
+#        - put: version
+#          params:
+#            bump: patch
+
+        - aggregate:
+          - get: collatex-sources
+            passed: [test]
+            trigger: true
+          - get: maven-config
+            trigger: true
+
+        - task: task-package
+
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: {{collatex-ci-image}}
+                insecure_registries: [ {{insecure-registries}} ]
+
+            inputs:
+              - name: collatex-sources
+              - name: maven-config
+
+            run:
+              path: sh
+              args:
+                - -exc
+                - |
+                  mkdir /root/.m2/
+                  cp maven-config/settings.xml /root/.m2/
+                  cd collatex-sources
+                  mvn package
