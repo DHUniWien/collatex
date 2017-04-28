@@ -4,6 +4,7 @@ resources:
       type: git
       source:
         uri: {{collatex-sources}}
+        paths: [collatex-core, collatex-tools, ci/resources]
 
     - name: maven-config
       type: git
@@ -11,14 +12,15 @@ resources:
         uri: {{maven-config-uri}}
         private_key: {{DHUniWienMU-priv-key}}
 
-#    - name: version
-#      type: semver
-#      source:
-#        driver: git
-#        uri: {{version-uri}}
-#        branch: {{version-branch}}
-#        file: {{version-file}}
-#        initial_version: "0.0.0"
+    - name: version
+      type: semver
+      source:
+        driver: git
+        uri: {{version-uri}}
+        branch: {{version-branch}}
+        file: {{version-file}}
+        initial_version: "0.0.0"
+        private_key: {{DHUniWienMU-priv-key}}
 
 
 jobs:
@@ -57,9 +59,9 @@ jobs:
 
     - name: package
       plan:
-#        - put: version
-#          params:
-#            bump: patch
+        - put: version
+          params:
+            bump: patch
 
         - aggregate:
           - get: collatex-sources
