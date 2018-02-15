@@ -25,6 +25,7 @@ import eu.interedition.collatex.matching.Matches;
 import eu.interedition.collatex.simple.SimpleToken;
 import eu.interedition.collatex.simple.SimpleWitness;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -40,6 +41,7 @@ public class BeckettTest extends AbstractTest {
      * rank matched vertices!!!
      */
     @Test
+    @Ignore
     public void testBeckettStrangeTransposition() {
         SimpleWitness[] w = createWitnesses("People with things, people without things, things without people, what does it matter. I'm confident I can soon scatter them.", "People with things, people without things, things without people, what does it matter, it will not take me long to scatter them.", "People with things, people without things, things without people, what does it matter, I flatter myself it will not take me long to scatter them, whenever I choose, to the winds.");
         final VariantGraph graph = new VariantGraph();
