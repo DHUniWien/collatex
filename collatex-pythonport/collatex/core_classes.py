@@ -18,7 +18,6 @@ from collatex.exceptions import TokenError
 
 
 class Collation(object):
-
     @classmethod
     def create_from_dict(cls, data, limit=None):
         witnesses = data["witnesses"]
@@ -43,7 +42,7 @@ class Collation(object):
         self.witnesses.append(witness)
 
     def add_plain_witness(self, sigil, content):
-        return self.add_witness({'id':sigil, 'content':content})
+        return self.add_witness({'id': sigil, 'content': content})
 
 
 class Row(object):
@@ -71,7 +70,7 @@ class Column(object):
 
 
 class AlignmentTable(object):
-    def __init__(self, collation, graph=None, layout="horizontal",ranks=None):
+    def __init__(self, collation, graph=None, layout="horizontal", ranks=None):
         self.collation = collation
         self.graph = graph
         self.layout = layout
@@ -80,13 +79,13 @@ class AlignmentTable(object):
         if graph:
             self._construct_table(ranks)
 
-    def _construct_table(self,ranks):
+    def _construct_table(self, ranks):
         if ranks:
             ranking = ranks
         else:
             ranking = VariantGraphRanking.of(self.graph)
         vertices_per_rank = ranking.byRank
-        # construct columns        
+        # construct columns
         for rank in vertices_per_rank:
             column = None
             vertices = vertices_per_rank[rank]
@@ -96,14 +95,9 @@ class AlignmentTable(object):
                 if not column:
                     column = Column()
                     self.columns.append(column)
-                # find incoming edges for this vertex and check their labels
-                edges = self.graph.in_edges(vertex, data=True)
-                for (_, _, attrs) in edges:
-                    sigli = attrs["label"]
-                    for sigil in sigli.split(", "):
-                        token = vertex.tokens[sigil]
-                        column.put(sigil, token)
-                # set status: is a column variant or invariant
+                for (sigil, token) in vertex.tokens.items():
+                    column.put(sigil, token)
+                    # set status: is a column variant or invariant
                 column.variant = len(vertices) > 1 or len(column.tokens_per_witness) != len(self.collation.witnesses)
 
         # construct rows
@@ -141,7 +135,7 @@ def visualizeTableHorizontal(table):
     for row in table.rows:
         cells = [row.header]
         t_list = [(token.token_data["t"] for token in cell) if cell else ["-"] for cell in row.cells]
-        cells.extend([re.sub('\s+$','',"".join(cell)) for cell in t_list])
+        cells.extend([re.sub('\s+$', '', "".join(cell)) for cell in t_list])
         x.add_row(cells)
     # alignment can only be set after the field names are known.
     # since add_row sets the field names, it has to be set after x.add_row(cells)
@@ -208,8 +202,8 @@ class Witness(object):
 
 
 class VariantGraphVertex(object):
-    def __init__(self, token=None, sigil=None):
-        self.label = token.token_string if token else ''
+    def __init__(self, token=None, sigil=None, label=None):
+        self.label = label if label else token.token_string if token else ''
         self.tokens = {sigil: [token]} if sigil else {}
 
     def add_token(self, sigil, token):
@@ -229,11 +223,11 @@ class VariantGraph(object):
     def __init__(self):
         self.graph = nx.DiGraph()
         # Start and end are the only nodes without sigil or tokens
-        self.start = self.add_vertex(None, None)
-        self.end = self.add_vertex(None, None)
+        self.start = self.add_vertex(None, None, label='start')
+        self.end = self.add_vertex(None, None, label='end')
 
-    def add_vertex(self, token, sigil):
-        newVertex = VariantGraphVertex(token, sigil)
+    def add_vertex(self, token, sigil, label=None):
+        newVertex = VariantGraphVertex(token, sigil, label)
         self.graph.add_node(newVertex)
         # Returned to aligner, which tracks relationship of tokens and vertices
         return newVertex
@@ -312,7 +306,7 @@ class CollationAlgorithm(object):
  This function joins the variant graph in place.
  This function is a straight port of the Java version of CollateX.
     :type graph: VariantGraph
- TODO: add transposition support!   
+ TODO: add transposition support!
 '''
 
 
@@ -335,8 +329,8 @@ def join(graph):
                     graph.connect(vertex, neighbor, data["label"])
                 graph.remove_edge(vertex, join_candidate)
                 graph.remove_node(join_candidate)
-                queue.appendleft(vertex);
-                continue;
+                queue.appendleft(vertex)
+                continue
         processed.add(vertex)
         for (_, neighbor) in out_edges:
             # FIXME: Why do we run out of memory in some cases here, if this is not checked?
