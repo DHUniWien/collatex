@@ -3,25 +3,11 @@
 History
 -------
 
-2.2 (2018-08-16)
-++++++++++++++++
-* Create documentation for CollateX Python
-* TEI output writes "t" values instead of "n" values
-* TEI output uses minidom instead of etree
-* TEI output uses same namespaces and wrapper as CollateX Java
-* Add "csv" and "tsv" output options
-* Use graphviz Python bindings instead of PyGraphviz for Windows compatibility
-
-2.1.3rc2 (2018-08-10)
-+++++++++++++++++++++
-* Update networkx compatibility from 1.11 to 2.1
-* Replace pygraphviz bindings with graphviz for Windows compatibility
-* Update near matching to add near-matching edges and adjust rank in SVG output
-
 2.1.3rc1 (2017-10-09)
 +++++++++++++++++++++
 * New version of the alignment algorithm (which we call the MatchCube approach)
   to reduce order effects during multiple witness alignment.
+
 
 2.1.3rc0 (2017-07-24)
 +++++++++++++++++++++
