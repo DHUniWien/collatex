@@ -6,6 +6,9 @@ target
 *.iws
 *.ipynb
 *.egg-info
+Digraph.gv*
+collatex-pythonport/build/*
+collatex-pythonport/dist/*
 
 .classpath
 .eggs

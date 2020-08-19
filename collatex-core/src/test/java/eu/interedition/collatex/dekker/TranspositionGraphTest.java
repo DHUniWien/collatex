@@ -40,7 +40,7 @@ public class TranspositionGraphTest extends AbstractTest {
 
     @Before
     public void setup() {
-        collationAlgorithm = CollationAlgorithmFactory.dekker(new EqualityTokenComparator());
+        collationAlgorithm = CollationAlgorithmFactory.legacyDekker(new EqualityTokenComparator());
         ((InspectableCollationAlgorithm) collationAlgorithm).setMergeTranspositions(true);
     }
 
